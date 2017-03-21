@@ -8,6 +8,19 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+func init() {
+	index := mgo.Index{
+		Key: []string{"name"},
+		Unique: true,
+	}
+
+	_, collection := getUsersCollection()
+	err := collection.EnsureIndex(index)
+	if err != nil {
+		log.Fatalf("Can not ensure index on user collection, error: %s", err.Error())
+	}
+}
+
 func getUsersCollection() (*mgo.Session, *mgo.Collection) {
 	session := mongodb.MongoDBSession.Copy()
 	return session, session.DB("SimpleChat").C("users")
